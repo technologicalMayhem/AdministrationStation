@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AdministrationStation.Server.Filters;
 using AdministrationStation.Server.Identity.Data;
 using AdministrationStation.Server.Models;
 using Microsoft.AspNetCore.Identity;
@@ -24,20 +25,25 @@ namespace AdministrationStation.Server.Controllers
             _userManager = userManager;
             _configuration = configuration;
         }
-        
+
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)  
+        public async Task<IActionResult> ClientLogin([FromBody] LoginModel model) => await Login(model);
+
+        [HttpPost]
+        public async Task<IActionResult> AgentLogin([FromBody] LoginModel model) => await Login(model);
+
+        private async Task<IActionResult> Login(LoginModel model)
         {
             var user = await _userManager.FindByNameAsync(model.UserName);
-            
+
             if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password)) return Unauthorized();
-            
-            var authClaims = new List<Claim>  
-            {  
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),  
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),  
+
+            var authClaims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
-  
+
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
 
             var token = new JwtSecurityToken(
@@ -45,13 +51,13 @@ namespace AdministrationStation.Server.Controllers
                 _configuration["JWT:ValidAudience"],
                 authClaims,
                 expires: DateTime.Now.AddHours(3),
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)  
-            );  
-  
-            return Ok(new  
-            {  
-                token = new JwtSecurityTokenHandler().WriteToken(token),  
-                expiration = token.ValidTo  
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = token.ValidTo
             });
         }
     }

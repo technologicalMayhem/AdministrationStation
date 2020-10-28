@@ -53,6 +53,8 @@ namespace AdministrationStation.Server
 
             services.AddDbContext<ServerContext>(builder => builder.UseInMemoryDatabase("TestDatabase"));
 
+            services.AddSingleton<InfoStore>();
+            
             services.AddControllers();
         }
 
