@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace AdministrationStation.Server.Identity.Data
 {
@@ -6,6 +7,8 @@ namespace AdministrationStation.Server.Identity.Data
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ClientId { get; set; }
-        public User User { get; set; }
+
+        [ForeignKey("User")] public int UserId { get; set; }
+        [JsonIgnore] public User User { get; set; }
     }
 }

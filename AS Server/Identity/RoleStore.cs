@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AdministrationStation.Server.Data;
@@ -8,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AdministrationStation.Server.Identity
 {
-    public class RoleStore : IRoleStore<Role>
+    //Todo: Implement mechanism to define client or agent only roles.
+    public class RoleStore : IRoleStore<Role>, IQueryableRoleStore<Role>
     {
         public RoleStore(ServerContext context)
         {
@@ -147,5 +149,7 @@ namespace AdministrationStation.Server.Identity
             await SaveChanges(cancellationToken);
             return IdentityResult.Success;
         }
+
+        IQueryable<Role> IQueryableRoleStore<Role>.Roles => Roles;
     }
 }

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AdministrationStation.Server.Identity
 {
-    public class UserStore : IUserRoleStore<User>, IUserPasswordStore<User>
+    public class UserStore : IUserRoleStore<User>, IUserPasswordStore<User>, IQueryableUserStore<User>
     {
         private ServerContext Context { get; }
         private DbSet<User> Users => Context.Users;
@@ -81,14 +81,21 @@ namespace AdministrationStation.Server.Identity
         {
             cancellationToken.ThrowIfCancellationRequested();
             var id = GetIdFromString(userId);
-            return await Users.FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
+            return await Users
+                .Include(u => u.Agent)
+                .Include(u => u.Client)
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         }
 
         public async Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return await Users.FirstOrDefaultAsync(user => user.NormalizedUsername == normalizedUserName,
-                cancellationToken);
+            var user = await Users
+                .Include(u => u.Agent)
+                .Include(u => u.Client)
+                .FirstOrDefaultAsync(u => u.NormalizedUsername == normalizedUserName,
+                    cancellationToken);
+            return user;
         }
 
         public Task<string> GetNormalizedUserNameAsync(User user, CancellationToken cancellationToken)
@@ -98,6 +105,7 @@ namespace AdministrationStation.Server.Identity
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             return Task.FromResult(user.NormalizedUsername);
         }
 
@@ -119,10 +127,11 @@ namespace AdministrationStation.Server.Identity
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
             return Task.FromResult(user.UserName);
         }
 
-        public async Task SetNormalizedUserNameAsync(User user, string normalizedName,
+        public Task SetNormalizedUserNameAsync(User user, string normalizedName,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -135,12 +144,12 @@ namespace AdministrationStation.Server.Identity
             {
                 throw new ArgumentException("Username may not be null or empty.");
             }
-            
+
             user.NormalizedUsername = normalizedName;
-            await UpdateAsync(user, cancellationToken);
+            return Task.CompletedTask;
         }
 
-        public async Task SetUserNameAsync(User user, string userName, CancellationToken cancellationToken)
+        public Task SetUserNameAsync(User user, string userName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (user == null)
@@ -152,9 +161,9 @@ namespace AdministrationStation.Server.Identity
             {
                 throw new ArgumentException("Username may not be null or empty.");
             }
-            
+
             user.UserName = userName;
-            await UpdateAsync(user, cancellationToken);
+            return Task.CompletedTask;
         }
 
         public async Task<IdentityResult> UpdateAsync(User user, CancellationToken cancellationToken)
@@ -198,6 +207,7 @@ namespace AdministrationStation.Server.Identity
             {
                 throw new InvalidOperationException($"Role {roleName} does not exist.");
             }
+
             await UserRoles.AddAsync(new UserRole(user, roleEntity), cancellationToken);
             await SaveChanges(cancellationToken);
         }
@@ -286,7 +296,8 @@ namespace AdministrationStation.Server.Identity
                 throw new ArgumentException("Role name may not be null or empty.");
             }
 
-            return await Roles.FirstOrDefaultAsync(role => role.NormalizedName == normalizedRoleName, cancellationToken);
+            return await Roles.FirstOrDefaultAsync(role => role.NormalizedName == normalizedRoleName,
+                cancellationToken);
         }
 
         /// <summary>
@@ -319,10 +330,12 @@ namespace AdministrationStation.Server.Identity
             return Task.FromResult(string.IsNullOrWhiteSpace(user.HashedPassword));
         }
 
-        public async Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken)
+        public Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken)
         {
             user.HashedPassword = passwordHash;
-            await UpdateAsync(user, cancellationToken);
+            return Task.CompletedTask;
         }
+
+        IQueryable<User> IQueryableUserStore<User>.Users => Users;
     }
 }

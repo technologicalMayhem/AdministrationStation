@@ -65,7 +65,7 @@ namespace AdministrationStation.Server
                 app.UseDeveloperExceptionPage();
             }
 
-            TestData.Seed(context, userManager, roleManager);
+            SeedData.Seed(context, userManager, roleManager);
 
 
             app.UseHttpsRedirection();
