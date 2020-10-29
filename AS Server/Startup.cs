@@ -1,10 +1,14 @@
+using System;
 using System.Text;
+using System.Text.Json;
+using AdministrationStation.Communication.Models.Shared;
 using AdministrationStation.Server.Data;
 using AdministrationStation.Server.Identity;
 using AdministrationStation.Server.Identity.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -54,8 +58,8 @@ namespace AdministrationStation.Server
             services.AddDbContext<ServerContext>(builder => builder.UseInMemoryDatabase("TestDatabase"));
 
             services.AddSingleton<InfoStore>();
-            
-            services.AddControllers();
+
+            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,14 +73,13 @@ namespace AdministrationStation.Server
 
             SeedData.Seed(context, userManager, roleManager);
 
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }

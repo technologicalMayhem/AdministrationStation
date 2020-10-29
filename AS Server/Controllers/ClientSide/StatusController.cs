@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using AdministrationStation.Server.Controllers.Agent;
+using AdministrationStation.Communication.Models.Client;
 using AdministrationStation.Server.Data;
 using AdministrationStation.Server.Filters;
 using AdministrationStation.Server.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AdministrationStation.Server.Controllers.Client
+namespace AdministrationStation.Server.Controllers.ClientSide
 {
     [ApiController]
     [SideFilter(Side.Client)]
@@ -30,16 +28,10 @@ namespace AdministrationStation.Server.Controllers.Client
         {
             var status = _infoStore.StatusModels.Select(pair => new StatusResultModel
             {
-                Agent = _userManager.FindByIdAsync(pair.Key.ToString()).Result.Agent,
+                Agent = _userManager.FindByIdAsync(pair.Key.ToString()).Result.UserName,
                 Status = pair.Value
             }).ToArray();
             return status;
         }
-    }
-
-    public class StatusResultModel
-    {
-        public Identity.Data.Agent Agent { get; set; }
-        public StatusModel Status { get; set; }
     }
 }

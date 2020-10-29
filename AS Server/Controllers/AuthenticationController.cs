@@ -4,9 +4,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AdministrationStation.Communication.Models.Shared;
 using AdministrationStation.Server.Filters;
 using AdministrationStation.Server.Identity.Data;
-using AdministrationStation.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -56,8 +56,8 @@ namespace AdministrationStation.Server.Controllers
 
             return Ok(new
             {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
+                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                Expiration = token.ValidTo
             });
         }
     }

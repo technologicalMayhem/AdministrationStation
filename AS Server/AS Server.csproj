@@ -19,5 +19,13 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\AS Communication\AS Communication.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Models" />
+    </ItemGroup>
+
 
 </Project>

@@ -7,6 +7,7 @@ using AdministrationStation.Server.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Side = AdministrationStation.Server.Identity.Data.Side;
 
 namespace AdministrationStation.Server.Data
 {

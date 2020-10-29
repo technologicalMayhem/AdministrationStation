@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AS Agent", "AS Agent\AS Age
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AS Server", "AS Server\AS Server.csproj", "{255E7C13-7A2D-4A04-8B6D-063AA669C9FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AS Communication", "AS Communication\AS Communication.csproj", "{9928C5FE-E021-4488-8DB8-6686697FFC48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{255E7C13-7A2D-4A04-8B6D-063AA669C9FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{255E7C13-7A2D-4A04-8B6D-063AA669C9FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{255E7C13-7A2D-4A04-8B6D-063AA669C9FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9928C5FE-E021-4488-8DB8-6686697FFC48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9928C5FE-E021-4488-8DB8-6686697FFC48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9928C5FE-E021-4488-8DB8-6686697FFC48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9928C5FE-E021-4488-8DB8-6686697FFC48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

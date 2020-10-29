@@ -4,9 +4,42 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AS_Client"
+        xmlns:client="clr-namespace:AdministrationStation.Communication.Models.Client;assembly=AS-Communication"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Window.Resources>
+        <DataTemplate x:Key="Agent" DataType="{x:Type client:StatusResultModel}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
+                <Label Grid.Row="0" Grid.Column="0" Content="Agent Name"/>
+                <Label Grid.Row="0" Grid.Column="1" Content="{Binding Agent}" />
+                <Label Grid.Row="1" Grid.Column="0" Content="Hostname"/>
+                <Label Grid.Row="1" Grid.Column="1" Content="{Binding Status.Hostname}" />
+                <Label Grid.Row="2" Grid.Column="0" Content="Ip Address"/>
+                <Label Grid.Row="2" Grid.Column="1" Content="{Binding Status.IpAddress}" />
+                <Label Grid.Row="3" Grid.Column="0" Content="Cpu Usage"/>
+                <Label Grid.Row="3" Grid.Column="1" Content="{Binding Status.CpuUsage}" />
+                <Label Grid.Row="4" Grid.Column="0" Content="Ram Total"/>
+                <Label Grid.Row="4" Grid.Column="1" Content="{Binding Status.MaximumRam}" />
+                <Label Grid.Row="5" Grid.Column="0" Content="Ram Usage"/>
+                <Label Grid.Row="5" Grid.Column="1" Content="{Binding Status.CurrentRam}" />
+            </Grid>
+            
+        </DataTemplate>
+    </Window.Resources>
+    <Grid> 
+        <ListBox Grid.Row="0" Name="ListBox" ItemsSource="{Binding Path=AgentData}" ItemTemplate="{StaticResource Agent}"/>
     </Grid>
 </Window>

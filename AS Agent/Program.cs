@@ -15,15 +15,15 @@ namespace AS_Agent
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    IConfiguration configuration = hostContext.Configuration;
-
-                    WorkerConfiguration options = configuration.GetSection("Agent").Get<WorkerConfiguration>();
-
+                    var configuration = hostContext.Configuration;
+                    var options = configuration.GetSection("Agent").Get<WorkerConfiguration>();
+                    
                     services.AddSingleton(options);
+                    services.AddHttpClient<ServerService>();
 
                     services.AddHostedService<Worker>();
                 });

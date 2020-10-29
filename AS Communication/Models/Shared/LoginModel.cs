@@ -1,4 +1,4 @@
-﻿namespace AdministrationStation.Server.Models
+﻿namespace AdministrationStation.Communication.Models.Shared
 {
     public class LoginModel
     {

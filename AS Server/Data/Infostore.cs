@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
-using AdministrationStation.Server.Controllers.Agent;
+using AdministrationStation.Communication.Models.Agent;
 
 namespace AdministrationStation.Server.Data
 {
     public class InfoStore
     {
-        public Dictionary<int, StatusModel> StatusModels { get; set; }
+        public Dictionary<int, StatusUpdateModel> StatusModels { get; set; }
 
         public InfoStore()
         {
-            StatusModels = new Dictionary<int, StatusModel>();
+            StatusModels = new Dictionary<int, StatusUpdateModel>();
         }
     }
 }
