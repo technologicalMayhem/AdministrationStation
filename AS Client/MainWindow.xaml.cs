@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -25,17 +27,17 @@ namespace AS_Client
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ObservableCollection<StatusResultModel> AgentData { get; set; }
+        private ObservableCollection<AgentResult> AgentData { get; set; }
 
         private readonly DispatcherTimer _timer;
-        
+
         public MainWindow()
         {
             InitializeComponent();
-            
-            AgentData = new ObservableCollection<StatusResultModel>();
+
+            AgentData = new ObservableCollection<AgentResult>();
             ListBox.ItemsSource = AgentData;
-            
+
             var dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += UpdateAgentData;
             dispatcherTimer.Interval = TimeSpan.FromSeconds(5);
@@ -52,10 +54,36 @@ namespace AS_Client
         {
             var result = ServerService.Instance.GetAgentStatuses().Result;
             AgentData.Clear();
-            
+
             foreach (var resultModel in result)
             {
-                AgentData.Add(resultModel);
+                AgentData.Add(new AgentResult(resultModel));
+            }
+        }
+        
+    }
+    
+    public class AgentResult : StatusResultModel
+    {
+        public AgentResult(StatusResultModel model)
+        {
+            Agent = model.Agent;
+            Status = model.Status;
+        }
+
+        public ImageSource ImageSource
+        {
+            get
+            {
+                var biImg = new BitmapImage();
+                var ms = new MemoryStream(Status.Screenshot);
+                biImg.BeginInit();
+                biImg.StreamSource = ms;
+                biImg.EndInit();
+
+                var imgSrc = (ImageSource) biImg;
+
+                return imgSrc;
             }
         }
     }

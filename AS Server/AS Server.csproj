@@ -17,6 +17,8 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>
+      <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.1" />
+      <PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.2.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -24,6 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Data\Models" />
       <Folder Include="Models" />
     </ItemGroup>
 

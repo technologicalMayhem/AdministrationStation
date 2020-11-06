@@ -34,7 +34,7 @@ namespace AdministrationStation.Server.Controllers
 
         private async Task<IActionResult> Login(LoginModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.UserName);
+            var user = await _userManager.FindByNameAsync(model.Username);
 
             if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password)) return Unauthorized();
 

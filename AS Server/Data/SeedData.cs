@@ -26,7 +26,7 @@ namespace AdministrationStation.Server.Data
                     ("Tobias", "tobias", new[] {"Administrator"}, Side.Client, new Client()),
                     ("Calvin", "calvin", new string[] { }, Side.Client, new Client()),
                     ("JohnSmith", "johnSmith", new[] {"Guest"}, Side.Client, new Client()),
-                    ("70eb8784-b06d-401a-b3db-7b629006415f", "password", new string[] { }, Side.Agent, new Agent())
+                    ("70eb8784-b06d-401a-b3db-7b629006415f", "password", new string[] { }, Side.Agent, new Agent{})
                 };
 
 

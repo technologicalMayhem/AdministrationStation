@@ -8,13 +8,14 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
-        <DataTemplate x:Key="Agent" DataType="{x:Type client:StatusResultModel}">
+        <DataTemplate x:Key="Agent" DataType="{x:Type local:AgentResult}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -35,6 +36,7 @@
                 <Label Grid.Row="4" Grid.Column="1" Content="{Binding Status.MaximumRam}" />
                 <Label Grid.Row="5" Grid.Column="0" Content="Ram Usage"/>
                 <Label Grid.Row="5" Grid.Column="1" Content="{Binding Status.CurrentRam}" />
+                <Image Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Source="{Binding ImageSource}" />
             </Grid>
             
         </DataTemplate>

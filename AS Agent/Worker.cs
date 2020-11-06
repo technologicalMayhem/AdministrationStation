@@ -1,15 +1,19 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Sockets;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using AdministrationStation.Communication;
 using AdministrationStation.Communication.Models.Agent;
-using AdministrationStation.Communication.Models.Shared;
+using AS_Agent.Job;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -18,20 +22,30 @@ namespace AS_Agent
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly WorkerConfiguration _configuration;
+        private readonly ConfigurationProvider _options;
         private readonly ServerService _server;
         private readonly PerformanceCounter _cpuUsage;
+        private readonly IServiceProvider _provider;
 
-        public Worker(ILogger<Worker> logger, WorkerConfiguration configuration, ServerService server)
+        private readonly List<IJob> _jobs;
+
+        public Worker(ILogger<Worker> logger, ConfigurationProvider options, ServerService server, IServiceProvider provider)
         {
             _logger = logger;
-            _configuration = configuration;
+            _options = options;
             _server = server;
+            _provider = provider;
             _cpuUsage = new PerformanceCounter();
+            _jobs = new List<IJob>();
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
+            _jobs.AddRange(new IJob[]
+            {
+                ActivatorUtilities.CreateInstance<StatusUpdate>(_provider),
+                ActivatorUtilities.CreateInstance<ConfigurationUpdate>(_provider)
+            });
             await ExecuteAsync(cancellationToken);
         }
 
@@ -40,32 +54,33 @@ namespace AS_Agent
             var rng = new Random();
             while (!stoppingToken.IsCancellationRequested)
             {
-                var status = new StatusUpdateModel
+                foreach (var job in _jobs.Where(job => job.RunNext < DateTime.Now))
                 {
-                    Hostname = Environment.MachineName,
-                    IpAddress = GetLocalIpAddress(),
-                    CpuUsage = rng.Next(101),
-                    MaximumRam = 8192,
-                    CurrentRam = rng.Next(8193)
-                };
-                await _server.ReportStatus(status);
+                    await job.RunJob();
+                }
 
-                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
             }
         }
 
-        private static string GetLocalIpAddress()
-        {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    return ip.ToString();
-                }
-            }
+        [DllImport("user32.dll")]
+        private static extern int GetSystemMetrics(int nIndex);
 
-            throw new Exception("No network adapters with an IPv4 address in the system!");
+        private static int PrimaryScreenWidth => GetSystemMetrics(0);
+        private static int PrimaryScreenHeight => GetSystemMetrics(1);
+
+        private static byte[] TakeScreenshot()
+        {
+            using var bitmap = new Bitmap(PrimaryScreenWidth, PrimaryScreenHeight);
+            using (var g = Graphics.FromImage(bitmap))
+            {
+                g.CopyFromScreen(0, 0, 0, 0,
+                    bitmap.Size, CopyPixelOperation.SourceCopy);
+            }
+            using var memory = new MemoryStream();
+            bitmap.Save(memory, ImageFormat.Png);
+
+            return memory.ToArray();
         }
     }
 }

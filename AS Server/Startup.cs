@@ -55,11 +55,18 @@ namespace AdministrationStation.Server
                     };
                 });
 
-            services.AddDbContext<ServerContext>(builder => builder.UseInMemoryDatabase("TestDatabase"));
+            services.AddDbContext<ServerContext>(builder => 
+                builder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+                );
 
             services.AddSingleton<InfoStore>();
+            services.AddScoped<AgentOptionsManager>();
 
-            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+            services.AddControllers()
+                .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+
+            services.AddMiniProfiler()
+                .AddEntityFramework();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,7 +86,9 @@ namespace AdministrationStation.Server
 
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
+            app.UseMiniProfiler();
+
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }

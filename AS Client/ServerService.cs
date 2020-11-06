@@ -39,7 +39,7 @@ namespace AS_Client
         {
             var model = new LoginModel
             {
-                UserName = ClientConfiguration.Username,
+                Username = ClientConfiguration.Username,
                 Password = ClientConfiguration.Password
             };
             var payload = JsonSerializer.Serialize(model);
