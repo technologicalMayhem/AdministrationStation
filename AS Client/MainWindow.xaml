@@ -3,45 +3,48 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AS_Client"
-        xmlns:client="clr-namespace:AdministrationStation.Communication.Models.Client;assembly=AS-Communication"
+        xmlns:vm="clr-namespace:AS_Client.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" d:DesignWidth="800" d:DesignHeight="600">
+    <Window.DataContext>
+        <vm:MainWindowViewModel />
+    </Window.DataContext>
     <Window.Resources>
-        <DataTemplate x:Key="Agent" DataType="{x:Type local:AgentResult}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <Label Grid.Row="0" Grid.Column="0" Content="Agent Name"/>
-                <Label Grid.Row="0" Grid.Column="1" Content="{Binding Agent}" />
-                <Label Grid.Row="1" Grid.Column="0" Content="Hostname"/>
-                <Label Grid.Row="1" Grid.Column="1" Content="{Binding Status.Hostname}" />
-                <Label Grid.Row="2" Grid.Column="0" Content="Ip Address"/>
-                <Label Grid.Row="2" Grid.Column="1" Content="{Binding Status.IpAddress}" />
-                <Label Grid.Row="3" Grid.Column="0" Content="Cpu Usage"/>
-                <Label Grid.Row="3" Grid.Column="1" Content="{Binding Status.CpuUsage}" />
-                <Label Grid.Row="4" Grid.Column="0" Content="Ram Total"/>
-                <Label Grid.Row="4" Grid.Column="1" Content="{Binding Status.MaximumRam}" />
-                <Label Grid.Row="5" Grid.Column="0" Content="Ram Usage"/>
-                <Label Grid.Row="5" Grid.Column="1" Content="{Binding Status.CurrentRam}" />
-                <Image Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Source="{Binding ImageSource}" />
-            </Grid>
-            
-        </DataTemplate>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
-    <Grid> 
-        <ListBox Grid.Row="0" Name="ListBox" ItemsSource="{Binding Path=AgentData}" ItemTemplate="{StaticResource Agent}"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="100*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="80*" />
+        </Grid.ColumnDefinitions>
+        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding Path=Toolbar}">
+            <Menu.ItemTemplate>
+                <DataTemplate DataType="{x:Type vm:CommandModel}">
+                    <MenuItem Header="{Binding DisplayName}"
+                              Command="{Binding Command}" />
+                </DataTemplate>
+            </Menu.ItemTemplate>
+        </Menu>
+        <!-- Todo: Make items in ListBox be selectable and change style accordingly https://stackoverflow.com/a/29885442 -->
+        <ListBox Grid.Row="1" Grid.Column="0" Background="{StaticResource SecondarySolid}"
+                 ItemsSource="{Binding Path=Sidebar}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type vm:CommandModel}">
+                    <Button Content="{Binding DisplayName}"
+                            Command="{Binding Command}"
+                            Template="{StaticResource ButtonFreeText}"
+                            Style="{StaticResource StyleSidebarTextSelected}">
+                    </Button>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Window>
