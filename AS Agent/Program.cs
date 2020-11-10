@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdministrationStation.Communication.Models.Agent;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,15 +16,16 @@ namespace AS_Agent
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    IConfiguration configuration = hostContext.Configuration;
-
-                    WorkerConfiguration options = configuration.GetSection("Agent").Get<WorkerConfiguration>();
-
+                    var configuration = hostContext.Configuration;
+                    var options = configuration.GetSection("Agent").Get<ConfigurationProvider>();
+                    options.Validate();
+                    
                     services.AddSingleton(options);
+                    services.AddHttpClient<ServerService>();
 
                     services.AddHostedService<Worker>();
                 });
