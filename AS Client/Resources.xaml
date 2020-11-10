@@ -1,37 +1,45 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:AS_Client"
-                    xmlns:vm="clr-namespace:AS_Client.ViewModels">
+                    xmlns:vm="clr-namespace:AS_Client.ViewModels"
+                    xmlns:i="http://schemas.microsoft.com/xaml/behaviors">
     <SolidColorBrush x:Key="PrimarySolid" Color="#c62828" />
     <SolidColorBrush x:Key="PrimaryLightSolid" Color="#ff5f52" />
     <SolidColorBrush x:Key="PrimaryDarkSolid" Color="#8e0000" />
-    <SolidColorBrush x:Key="SecondarySolid" Color="#039be5" />
-    <SolidColorBrush x:Key="SecondaryLightSolid" Color="#63ccff" />
-    <SolidColorBrush x:Key="SecondaryDarkSolid" Color="#006db3" />
+    <SolidColorBrush x:Key="SecondarySolid" Color="#01579b" />
+    <SolidColorBrush x:Key="SecondaryLightSolid" Color="#4f83cc" />
+    <SolidColorBrush x:Key="SecondaryDarkSolid" Color="#002f6c" />
+    
+    <!-- Sidebar Stuff -->
 
-    <ControlTemplate x:Key="ButtonFreeText" TargetType="{x:Type Button}">
-        <ContentPresenter />
-    </ControlTemplate>
-
-    <Style x:Key="StyleSidebarTextUnselected" TargetType="Button">
+    <Style x:Key="StyleSidebarText" TargetType="TextBlock">
         <Style.Setters>
-            <Setter Property="Margin" Value="10,5" />
+            <Setter Property="Padding" Value="10,5" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="FontFamily" Value="Arial Rounded MT" />
             <Setter Property="FontSize" Value="32" />
             <Setter Property="FontWeight" Value="Bold" />
         </Style.Setters>
     </Style>
-
-    <Style x:Key="StyleSidebarTextSelected" TargetType="Button">
-        <Style.Setters>
-            <Setter Property="Background" Value="{StaticResource SecondaryDarkSolid}" />
-            <Setter Property="Margin" Value="10,5" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontFamily" Value="Arial Rounded MT" />
-            <Setter Property="FontSize" Value="32" />
-            <Setter Property="FontWeight" Value="Bold" />
-        </Style.Setters>
-    </Style>
+    
+    <DataTemplate x:Key="SidebarDataTemplate" DataType="{x:Type vm:SidebarElementModel}">
+        <TextBlock Text="{Binding DisplayName}">
+            <TextBlock.Style>
+                <Style BasedOn="{StaticResource StyleSidebarText}"
+                       TargetType="{x:Type TextBlock}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsActive}" Value="True">
+                            <Setter Property="Background" Value="{StaticResource SecondaryDarkSolid}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeftButtonUp">
+                    <i:InvokeCommandAction Command="{Binding Command}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </TextBlock>
+    </DataTemplate>
 
 </ResourceDictionary>

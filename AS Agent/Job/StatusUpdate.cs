@@ -35,7 +35,7 @@ namespace AS_Agent.Job
             await _server.ReportStatus(status);
             _logger.LogInformation($"Status update ran at: {DateTime.Now:g}");
             
-            RunNext = DateTime.Now.AddSeconds(20);
+            RunNext = DateTime.Now.AddSeconds(5);
             
             return JobResult.Success;
         }

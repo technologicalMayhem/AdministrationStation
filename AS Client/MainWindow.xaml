@@ -1,6 +1,7 @@
 ﻿<Window x:Class="AS_Client.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:AS_Client.ViewModels"
@@ -14,6 +15,22 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="SidebarStyle" TargetType="{x:Type ListBoxItem}">
+                <Style.Triggers>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="true" />
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background" Value="{StaticResource SecondaryDarkSolid}" />
+                    </MultiTrigger>
+                </Style.Triggers>
+                <Style.Setters>
+                    <Setter Property="FontSize" Value="16" />
+                    <Setter Property="Padding" Value="0" />
+                </Style.Setters>
+            </Style>
+
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
@@ -25,26 +42,73 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="80*" />
         </Grid.ColumnDefinitions>
-        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding Path=Toolbar}">
-            <Menu.ItemTemplate>
-                <DataTemplate DataType="{x:Type vm:CommandModel}">
-                    <MenuItem Header="{Binding DisplayName}"
-                              Command="{Binding Command}" />
-                </DataTemplate>
-            </Menu.ItemTemplate>
-        </Menu>
-        <!-- Todo: Make items in ListBox be selectable and change style accordingly https://stackoverflow.com/a/29885442 -->
-        <ListBox Grid.Row="1" Grid.Column="0" Background="{StaticResource SecondarySolid}"
-                 ItemsSource="{Binding Path=Sidebar}">
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type vm:CommandModel}">
-                    <Button Content="{Binding DisplayName}"
-                            Command="{Binding Command}"
-                            Template="{StaticResource ButtonFreeText}"
-                            Style="{StaticResource StyleSidebarTextSelected}">
-                    </Button>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <!-- Sidebar -->
+        <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Sidebar}"
+                      ItemTemplate="{StaticResource SidebarDataTemplate}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical" Background="{StaticResource SecondarySolid}" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+        <!-- Dashboard -->
+        <ContentControl Grid.Row="1" Grid.Column="1" Visibility="{Binding Visibility}">
+            <ContentControl.DataContext>
+                <Binding Path="Dashboard" />
+            </ContentControl.DataContext>
+            <TextBlock Text="{Binding Text}" FontSize="30" />
+        </ContentControl>
+        <!-- Agents -->
+        <ContentControl Grid.Row="1" Grid.Column="1" Visibility="{Binding Visibility}">
+            <ContentControl.DataContext>
+                <Binding Path="Agents" />
+            </ContentControl.DataContext>
+            <ScrollViewer>
+                <ItemsControl ItemsSource="{Binding Agents}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="1" BorderBrush="DimGray">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Hostname"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Status.Hostname}"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="IP Address"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Status.IpAddress}"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="CPU Usage"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Status.CpuUsage}"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Current RAM Usage"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding Status.CurrentRam}"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Maximum RAM"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding Status.MaximumRam}"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </ContentControl>
+        <!-- Modules -->
+        <ContentControl Grid.Row="1" Grid.Column="1" Visibility="{Binding Visibility}">
+            <ContentControl.DataContext>
+                <Binding Path="Modules" />
+            </ContentControl.DataContext>
+            <TextBlock Text="{Binding Text}" FontSize="30" />
+        </ContentControl>
     </Grid>
 </Window>

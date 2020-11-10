@@ -15,7 +15,6 @@ namespace AS_Client.ViewModels
 
         protected CommandModel()
         {
-            
         }
 
         public string DisplayName { get; protected set; }
