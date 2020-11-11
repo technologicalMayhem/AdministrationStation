@@ -60,6 +60,7 @@ namespace AdministrationStation.Server
                 );
 
             services.AddSingleton<InfoStore>();
+            services.AddSingleton<ServerStatistics>();
             services.AddScoped<AgentOptionsManager>();
 
             services.AddControllers()
