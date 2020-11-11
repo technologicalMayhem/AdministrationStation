@@ -33,6 +33,15 @@ namespace AS_Agent
             if (!IsAuthenticated) await Login();
         }
 
+        public async Task<ServerState> GetServerState()
+        {
+            var response = await _client.GetAsync("/status");
+            response.EnsureSuccessStatusCode();
+            
+            await using var responseStream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<ServerState>(responseStream);
+        }
+
         private async Task Login()
         {
             var model = new LoginModel

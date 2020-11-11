@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -54,33 +55,46 @@ namespace AS_Agent
             var rng = new Random();
             while (!stoppingToken.IsCancellationRequested)
             {
-                foreach (var job in _jobs.Where(job => job.RunNext < DateTime.Now))
+                try
                 {
-                    await job.RunJob();
+                    foreach (var job in _jobs.Where(job => job.RunNext < DateTime.Now))
+                    {
+                        await job.RunJob();
+                    }
+                }
+                catch (HttpRequestException e)
+                {
+                    _logger.LogError(e.Message);
+                    DiagnoseNetworkProblems();
+                    await HandleServerOutage(stoppingToken);
                 }
 
                 await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
             }
         }
 
-        [DllImport("user32.dll")]
-        private static extern int GetSystemMetrics(int nIndex);
-
-        private static int PrimaryScreenWidth => GetSystemMetrics(0);
-        private static int PrimaryScreenHeight => GetSystemMetrics(1);
-
-        private static byte[] TakeScreenshot()
+        private void DiagnoseNetworkProblems()
         {
-            using var bitmap = new Bitmap(PrimaryScreenWidth, PrimaryScreenHeight);
-            using (var g = Graphics.FromImage(bitmap))
-            {
-                g.CopyFromScreen(0, 0, 0, 0,
-                    bitmap.Size, CopyPixelOperation.SourceCopy);
-            }
-            using var memory = new MemoryStream();
-            bitmap.Save(memory, ImageFormat.Png);
+            
+        }
 
-            return memory.ToArray();
+        private async Task HandleServerOutage(CancellationToken cancellationToken)
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(30) ,cancellationToken);
+                try
+                {
+                    await _server.GetServerState();
+                }
+                catch (HttpRequestException e)
+                {
+                    _logger.LogInformation($"Connection attempt to the server failed. {e.Message}");
+                    continue;
+                }
+                _logger.LogInformation("Connection to the server established.");
+                return;
+            }
         }
     }
 }

@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AdministrationStation.Communication.Models.Agent;
 using Microsoft.Extensions.Logging;
@@ -52,6 +56,27 @@ namespace AS_Agent.Job
             }
 
             throw new Exception("No network adapters with an IPv4 address in the system!");
+        }
+
+        [DllImport("user32.dll")]
+        private static extern int GetSystemMetrics(int nIndex);
+
+        private static int PrimaryScreenWidth => GetSystemMetrics(0);
+        private static int PrimaryScreenHeight => GetSystemMetrics(1);
+
+        private static byte[] TakeScreenshot()
+        {
+            using var bitmap = new Bitmap(PrimaryScreenWidth, PrimaryScreenHeight);
+            using (var g = Graphics.FromImage(bitmap))
+            {
+                g.CopyFromScreen(0, 0, 0, 0,
+                    bitmap.Size, CopyPixelOperation.SourceCopy);
+            }
+
+            using var memory = new MemoryStream();
+            bitmap.Save(memory, ImageFormat.Png);
+
+            return memory.ToArray();
         }
     }
 }
