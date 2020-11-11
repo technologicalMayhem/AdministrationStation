@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
+using Microsoft.Xaml.Behaviors.Core;
 
 namespace AS_Client.ViewModels
 {
@@ -23,9 +24,9 @@ namespace AS_Client.ViewModels
         {
             Id = Guid.NewGuid().ToString();
             _isActive = false;
-            Command = new RelayCommand(o =>
+            Command = new ActionCommand(() =>
             {
-                command.Execute(o);
+                command.Execute(new object());
                 IsActive = true;
             });
             DisplayName = displayName;

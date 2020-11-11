@@ -60,15 +60,15 @@ namespace AS_Client.ViewModels
         {
             Sidebar = new ObservableCollection<SidebarElementModel>
             {
-                new SidebarElementModel("Dashboard", new RelayCommand(_ => SelectDashboard())),
-                new SidebarElementModel("Agents", new RelayCommand(_ => SelectAgents())),
-                new SidebarElementModel("Modules", new RelayCommand(_ => SelectModules()))
+                new SidebarElementModel("Dashboard", new ActionCommand(SelectDashboard)),
+                new SidebarElementModel("Agents", new ActionCommand(SelectAgents)),
+                new SidebarElementModel("Modules", new ActionCommand(SelectModules))
             };
             Toolbar = new ObservableCollection<CommandModel>
             {
-                new CommandModel("File", new RelayCommand(_ => Console.WriteLine("File"))),
-                new CommandModel("Edit", new RelayCommand(_ => Console.WriteLine("Edit"))),
-                new CommandModel("View", new RelayCommand(_ => Console.WriteLine("View")))
+                new CommandModel("File", new ActionCommand(() => Console.WriteLine("File"))),
+                new CommandModel("Edit", new ActionCommand(() => Console.WriteLine("Edit"))),
+                new CommandModel("View", new ActionCommand(() => Console.WriteLine("View")))
             };
             MessageBar = new MessageBarViewModel();
 
