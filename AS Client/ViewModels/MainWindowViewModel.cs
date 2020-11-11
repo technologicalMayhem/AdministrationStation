@@ -47,12 +47,14 @@ namespace AS_Client.ViewModels
                 OnPropertyChanged(nameof(Toolbar));
             }
         }
+        
+        public MessageBarViewModel MessageBar { get; private set; }
 
         public WorkAreaViewModelBase Dashboard => _dashboard ??= new WorkAreaViewModelBase("Dashboard");
         public AgentWorkAreaViewModel Agents => _agents ??= new AgentWorkAreaViewModel();
         public WorkAreaViewModelBase Modules => _modules ??= new WorkAreaViewModelBase("Modules");
 
-        public object Test => _test ??= new ActionCommand(() => Console.WriteLine("Test!"));
+        public ICommand AddToMessageBar { get; private set; }
 
         public MainWindowViewModel()
         {
@@ -68,8 +70,25 @@ namespace AS_Client.ViewModels
                 new CommandModel("Edit", new RelayCommand(_ => Console.WriteLine("Edit"))),
                 new CommandModel("View", new RelayCommand(_ => Console.WriteLine("View")))
             };
+            MessageBar = new MessageBarViewModel();
 
             SelectedSidebarElement = Sidebar.FirstOrDefault()?.Id;
+            AddToMessageBar = new ActionCommand(AddRandomMessage);
+        }
+
+        private void AddRandomMessage()
+        {
+            var messages = new[]
+            {
+                "Server XYZ died. The funeral is next Wednesday.",
+                "The ASS is currently busy... please call back later.",
+                "A bug has occured. This is clearly the programmers fault.",
+                "Some things crashed. Don't even bother making a issue. WontFix.",
+                "Here is another silly and stupid message to pretend a error occured."
+            };
+            var rng = new Random();
+            
+            MessageBar.AddMessage(messages[rng.Next(messages.Length)]);
         }
 
         private void SelectDashboard()

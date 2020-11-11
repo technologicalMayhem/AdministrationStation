@@ -35,15 +35,29 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="100*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="80*" />
         </Grid.ColumnDefinitions>
+        <Border Height="0" Grid.Row="0" Grid.Column="0" Panel.ZIndex="999" Grid.ColumnSpan="2" VerticalAlignment="Top"
+                Style="{StaticResource MessageBarStyle}" Background="Orange" BorderBrush="Gray" BorderThickness="1">
+            <Grid>
+                <TextBlock Height="16" Text="{Binding MessageBar.Message}" HorizontalAlignment="Center" />
+                <TextBlock Margin="0,0,5,0" Foreground="#222222" Height="16" Text="Dismiss message"
+                           HorizontalAlignment="Right">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseLeftButtonUp">
+                            <i:InvokeCommandAction Command="{Binding MessageBar.ClearCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </TextBlock>
+            </Grid>
+        </Border>
         <!-- Sidebar -->
-        <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Sidebar}"
+        <ItemsControl Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Sidebar}"
                       ItemTemplate="{StaticResource SidebarDataTemplate}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -52,14 +66,14 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
         <!-- Dashboard -->
-        <ContentControl Grid.Row="1" Grid.Column="1" Visibility="{Binding Visibility}">
+        <ContentControl Grid.Row="0" Grid.Column="1" Visibility="{Binding Visibility}">
             <ContentControl.DataContext>
                 <Binding Path="Dashboard" />
             </ContentControl.DataContext>
             <TextBlock Text="{Binding Text}" FontSize="30" />
         </ContentControl>
         <!-- Agents -->
-        <ContentControl Grid.Row="1" Grid.Column="1" Visibility="{Binding Visibility}">
+        <ContentControl Grid.Row="0" Grid.Column="1" Visibility="{Binding Visibility}">
             <ContentControl.DataContext>
                 <Binding Path="Agents" />
             </ContentControl.DataContext>
@@ -86,16 +100,16 @@
                                         <ColumnDefinition Width="10" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Hostname"/>
-                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Status.Hostname}"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="IP Address"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Status.IpAddress}"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="CPU Usage"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Status.CpuUsage}"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Current RAM Usage"/>
-                                    <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding Status.CurrentRam}"/>
-                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Maximum RAM"/>
-                                    <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding Status.MaximumRam}"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Hostname" />
+                                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Status.Hostname}" />
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="IP Address" />
+                                    <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Status.IpAddress}" />
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="CPU Usage" />
+                                    <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Status.CpuUsage}" />
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Current RAM Usage" />
+                                    <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding Status.CurrentRam}" />
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Maximum RAM" />
+                                    <TextBlock Grid.Row="4" Grid.Column="2" Text="{Binding Status.MaximumRam}" />
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -104,7 +118,7 @@
             </ScrollViewer>
         </ContentControl>
         <!-- Modules -->
-        <ContentControl Grid.Row="1" Grid.Column="1" Visibility="{Binding Visibility}">
+        <ContentControl Grid.Row="0" Grid.Column="1" Visibility="{Binding Visibility}">
             <ContentControl.DataContext>
                 <Binding Path="Modules" />
             </ContentControl.DataContext>

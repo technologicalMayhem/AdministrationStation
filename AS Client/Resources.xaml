@@ -9,7 +9,37 @@
     <SolidColorBrush x:Key="SecondarySolid" Color="#01579b" />
     <SolidColorBrush x:Key="SecondaryLightSolid" Color="#4f83cc" />
     <SolidColorBrush x:Key="SecondaryDarkSolid" Color="#002f6c" />
-    
+
+    <!-- Message Bar -->
+
+    <Style x:Key="MessageBarStyle">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding MessageBar.IsActive}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="Height"
+                                From="0" To="18" Duration="0:0:0.25" />
+                            <Storyboard />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetProperty="Height"
+                                From="18" To="0.0" Duration="0:0:0.25" />
+                            <Storyboard />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+
     <!-- Sidebar Stuff -->
 
     <Style x:Key="StyleSidebarText" TargetType="TextBlock">
@@ -21,7 +51,7 @@
             <Setter Property="FontWeight" Value="Bold" />
         </Style.Setters>
     </Style>
-    
+
     <DataTemplate x:Key="SidebarDataTemplate" DataType="{x:Type vm:SidebarElementModel}">
         <TextBlock Text="{Binding DisplayName}">
             <TextBlock.Style>
