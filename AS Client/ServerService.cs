@@ -30,21 +30,22 @@ namespace AS_Client
             };
         }
         
-        private async Task EnsureAuthentication()
+        private void EnsureAuthentication()
         {
-            if (!IsAuthenticated) await Login();
+            if (!IsAuthenticated) throw new Exception();
         }
 
-        private async Task Login()
+        public async Task Login(string password)
         {
+            //Todo: See about making sure that the password sticks around in memory as short as possible
             var model = new LoginModel
             {
                 Username = ClientConfiguration.Username,
-                Password = ClientConfiguration.Password
+                Password = password
             };
             var payload = JsonSerializer.Serialize(model);
             var content = new StringContent(payload, Encoding.UTF8, Json);
-            var response = _client.PostAsync("/authentication/clientLogin", content).Result;
+            var response = await _client.PostAsync("/authentication/clientLogin", content);
             response.EnsureSuccessStatusCode();
 
             await using var responseStream = await response.Content.ReadAsStreamAsync();
@@ -55,13 +56,22 @@ namespace AS_Client
 
         public async Task<IEnumerable<StatusResultModel>> GetAgentStatuses()
         {
-            await EnsureAuthentication();
+            EnsureAuthentication();
             
             var response = _client.GetAsync("/client/status/get").Result;
             
             await using var responseStream = await response.Content.ReadAsStreamAsync();
             var statusData = await JsonSerializer.DeserializeAsync<StatusResultModel[]>(responseStream);
             return statusData;
+        }
+        
+        public async Task<ServerState> GetServerState()
+        {
+            var response = await _client.GetAsync("/status");
+            response.EnsureSuccessStatusCode();
+            
+            await using var responseStream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<ServerState>(responseStream);
         }
     }
 }

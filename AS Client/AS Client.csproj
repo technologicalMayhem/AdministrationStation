@@ -8,8 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="images\exclamationError.png" />
+    <None Remove="images\logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AS Communication\AS Communication.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.19" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="images\exclamationError.png" />
+    <Resource Include="images\logo.png" />
   </ItemGroup>
 
 </Project>
